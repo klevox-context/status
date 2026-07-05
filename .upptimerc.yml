@@ -10,6 +10,8 @@ sites:
     url: https://mcp.aibuku.com/health
   - name: Portal (app)
     url: https://app.aibuku.com/
+  - name: Canary (incident test)
+    url: https://status.aibuku.com/__uptime_canary_404
 
 status-website:
   cname: status.aibuku.com
