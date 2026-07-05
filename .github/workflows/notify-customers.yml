@@ -1,0 +1,41 @@
+name: Notify customers
+
+# Emails the Resend Audience when Upptime opens/closes an incident or maintenance issue.
+# Triggers on `labeled` (Upptime adds the `status`/`maintenance` label — de-duped in classify)
+# and `closed`. Calls Resend DIRECTLY (external) so alerts fire even if the cluster is down.
+# INERT until RESEND_API_KEY + RESEND_AUDIENCE_ID secrets exist (Resend go-live, context-infra #75).
+
+on:
+  issues:
+    types: [labeled, closed]
+  push:
+    paths: ["scripts/notify/**", ".github/workflows/notify-customers.yml"]
+  pull_request:
+    paths: ["scripts/notify/**", ".github/workflows/notify-customers.yml"]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    if: github.event_name != 'issues'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v6
+        with: { node-version: "20" }
+      - run: node --test scripts/notify/*.test.mjs
+
+  notify:
+    if: github.event_name == 'issues'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v6
+        with: { node-version: "20" }
+      - run: node scripts/notify/index.mjs
+        env:
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          RESEND_AUDIENCE_ID: ${{ secrets.RESEND_AUDIENCE_ID }}
+          STATUS_EMAIL_FROM: ${{ vars.STATUS_EMAIL_FROM }}
