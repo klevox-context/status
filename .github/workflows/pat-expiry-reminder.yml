@@ -1,0 +1,45 @@
+name: PAT expiry reminder
+
+# Reminds us to rotate the GH_PAT that powers this Upptime status page before it expires.
+# When the GH_PAT lapses, the scheduled workflows (probe -> history -> Pages deploy) fail and
+# the status page SILENTLY freezes. This job uses the auto-provided GITHUB_TOKEN (not GH_PAT),
+# so it keeps firing even as the PAT nears/passes expiry. Update EXPIRY on each rotation.
+
+on:
+  schedule:
+    - cron: "0 9 * * 1" # Mondays 09:00 UTC
+  workflow_dispatch: {}
+
+permissions:
+  issues: write
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const EXPIRY = '2027-07-06';   // GH_PAT expiry — UPDATE on each rotation
+            const LEAD_DAYS = 35;          // open the reminder this many days before expiry
+            const days = Math.floor((new Date(EXPIRY + 'T00:00:00Z') - new Date()) / 86400000);
+            core.info(`Days until GH_PAT expiry (${EXPIRY}): ${days}`);
+            if (days > LEAD_DAYS) { core.info('Outside the reminder window — nothing to do.'); return; }
+            const title = `🔑 Rotate the Upptime GH_PAT (expires ${EXPIRY})`;
+            const { owner, repo } = context.repo;
+            const open = await github.rest.issues.listForRepo({ owner, repo, state: 'open', per_page: 100 });
+            if (open.data.some(i => i.title === title)) { core.info('Reminder already open — nothing to do.'); return; }
+            const body = [
+              `The **\`GH_PAT\`** repo secret powering this Upptime status page expires on **${EXPIRY}** (~${days} days).`,
+              ``,
+              `When it expires, the scheduled workflows (probe → history → Pages deploy) fail and **the status page silently freezes**.`,
+              ``,
+              `**Rotate it:**`,
+              `1. Mint a new token from a **klevox-context** member account — fine-grained scoped to \`klevox-context/status\` (Administration / Contents / Issues / Pages / Workflows = read+write), or a classic PAT with \`repo\` + \`workflow\`.`,
+              `2. Replace the **\`GH_PAT\`** repo secret (Settings → Secrets and variables → Actions).`,
+              `3. Update \`EXPIRY\` in \`.github/workflows/pat-expiry-reminder.yml\` to the new expiry, then close this issue.`,
+              ``,
+              `_Auto-opened by the pat-expiry-reminder workflow._`,
+            ].join('\n');
+            await github.rest.issues.create({ owner, repo, title, body });
+            core.info('Reminder issue opened.');
