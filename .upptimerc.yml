@@ -12,6 +12,8 @@ sites:
     url: https://app.aibuku.com/
 
 status-website:
+  logoUrl: https://raw.githubusercontent.com/klevox-context/status/master/assets/logo.png
+  faviconUrl: https://raw.githubusercontent.com/klevox-context/status/master/assets/favicon.svg
   cname: status.aibuku.com
   name: aibuku.com status
   introTitle: "**aibuku.com** service status"
