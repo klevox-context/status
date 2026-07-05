@@ -10,11 +10,11 @@
     "uptimeWeek": "100.00%",
     "uptimeMonth": "100.00%",
     "uptimeYear": "100.00%",
-    "time": 623,
-    "timeDay": 623,
-    "timeWeek": 623,
-    "timeMonth": 623,
-    "timeYear": 623,
+    "time": 659,
+    "timeDay": 659,
+    "timeWeek": 659,
+    "timeMonth": 659,
+    "timeYear": 659,
     "dailyMinutesDown": {}
   },
   {
@@ -28,11 +28,11 @@
     "uptimeWeek": "100.00%",
     "uptimeMonth": "100.00%",
     "uptimeYear": "100.00%",
-    "time": 556,
-    "timeDay": 556,
-    "timeWeek": 556,
-    "timeMonth": 556,
-    "timeYear": 556,
+    "time": 624,
+    "timeDay": 624,
+    "timeWeek": 624,
+    "timeMonth": 624,
+    "timeYear": 624,
     "dailyMinutesDown": {}
   },
   {
@@ -46,11 +46,11 @@
     "uptimeWeek": "100.00%",
     "uptimeMonth": "100.00%",
     "uptimeYear": "100.00%",
-    "time": 626,
-    "timeDay": 626,
-    "timeWeek": 626,
-    "timeMonth": 626,
-    "timeYear": 626,
+    "time": 620,
+    "timeDay": 620,
+    "timeWeek": 620,
+    "timeMonth": 620,
+    "timeYear": 620,
     "dailyMinutesDown": {}
   },
   {
@@ -64,31 +64,11 @@
     "uptimeWeek": "100.00%",
     "uptimeMonth": "100.00%",
     "uptimeYear": "100.00%",
-    "time": 1326,
-    "timeDay": 1326,
-    "timeWeek": 1326,
-    "timeMonth": 1326,
-    "timeYear": 1326,
+    "time": 1331,
+    "timeDay": 1331,
+    "timeWeek": 1331,
+    "timeMonth": 1331,
+    "timeYear": 1331,
     "dailyMinutesDown": {}
-  },
-  {
-    "name": "Canary (incident test)",
-    "url": "https://status.aibuku.com/__uptime_canary_404",
-    "icon": "https://icons.duckduckgo.com/ip3/status.aibuku.com.ico",
-    "slug": "canary-incident-test",
-    "status": "down",
-    "uptime": "53.36%",
-    "uptimeDay": "53.36%",
-    "uptimeWeek": "53.36%",
-    "uptimeMonth": "53.36%",
-    "uptimeYear": "53.36%",
-    "time": 113,
-    "timeDay": 113,
-    "timeWeek": 113,
-    "timeMonth": 113,
-    "timeYear": 113,
-    "dailyMinutesDown": {
-      "2026-07-05": 0
-    }
   }
 ]
