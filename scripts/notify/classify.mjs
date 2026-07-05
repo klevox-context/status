@@ -1,6 +1,11 @@
 // Maps a GitHub `issues` event to a notification kind. Keyed on the *labeled* event's specific
 // label (so the single `status`/`maintenance` label-add de-dups against `opened` + other labels),
 // and on the issue's current labels for `closed`.
+//
+// The real de-dup protection is this label-specificity — NOT the bot-actor guard below. Upptime
+// acts as the `GH_PAT` account (which is why `on: issues` fires at all), so the
+// `github-actions[bot]` guard is a cheap secondary belt, not the primary safeguard. This workflow
+// never opens/closes issues itself, so there is no self-loop today.
 const names = (issue) => (issue?.labels ?? []).map((l) => (typeof l === "string" ? l : l.name));
 
 export function serviceFromTitle(title = "") {
@@ -18,6 +23,10 @@ export function classify(event) {
   const service = serviceFromTitle(issue?.title);
 
   if (action === "closed") {
+    // A "not planned" close (e.g. a stale/duplicate incident issue) is NOT a real recovery —
+    // don't email the audience "Resolved". `completed` (Upptime's auto-close on recovery) and an
+    // absent reason both proceed.
+    if (issue?.state_reason === "not_planned") return { kind: "ignore", reason: "closed as not_planned" };
     return { kind: isMaintenance ? "maintenance_done" : "incident_resolved", service, title: issue?.title ?? "" };
   }
   if (action === "labeled") {

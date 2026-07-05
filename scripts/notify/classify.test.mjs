@@ -39,3 +39,19 @@ test("hand-opened issue without status/maintenance -> ignore", () => {
   const r = classify({ action: "labeled", label: { name: "bug" }, issue: issue(["bug"], "🔑 Rotate the GH_PAT"), sender: { login: "someone" } });
   assert.equal(r.kind, "ignore");
 });
+
+test("closed as not_planned -> ignore (no false 'Resolved')", () => {
+  const iss = { ...issue(["status", "api"]), state_reason: "not_planned" };
+  assert.equal(classify({ action: "closed", issue: iss, sender: { login: "KlaasAtContext" } }).kind, "ignore");
+});
+
+test("closed as completed -> incident_resolved", () => {
+  const iss = { ...issue(["status", "api"]), state_reason: "completed" };
+  assert.equal(classify({ action: "closed", issue: iss, sender: { login: "KlaasAtContext" } }).kind, "incident_resolved");
+});
+
+test("both status+maintenance labels: closed -> maintenance_done; labeled status -> incident_open (pin precedence)", () => {
+  const both = issue(["status", "maintenance"], "Portal maintenance");
+  assert.equal(classify({ action: "closed", issue: both, sender: { login: "KlaasAtContext" } }).kind, "maintenance_done");
+  assert.equal(classify({ action: "labeled", label: { name: "status" }, issue: both, sender: { login: "KlaasAtContext" } }).kind, "incident_open");
+});

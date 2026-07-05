@@ -10,13 +10,15 @@ on:
     types: [labeled, closed]
   push:
     paths: ["scripts/notify/**", ".github/workflows/notify-customers.yml"]
+  pull_request:
+    paths: ["scripts/notify/**", ".github/workflows/notify-customers.yml"]
 
 permissions:
   contents: read
 
 jobs:
   test:
-    if: github.event_name == 'push'
+    if: github.event_name != 'issues'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

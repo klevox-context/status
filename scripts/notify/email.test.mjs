@@ -20,3 +20,9 @@ test("maintenance subject", () => {
 test("unknown kind throws", () => {
   assert.throws(() => buildEmail({ kind: "ignore" }));
 });
+
+test("maintenance title is HTML-escaped in the body", () => {
+  const { html } = buildEmail({ kind: "maintenance", service: "x", title: '<img src=x onerror=alert(1)>' });
+  assert.doesNotMatch(html, /<img/);
+  assert.match(html, /&lt;img/);
+});

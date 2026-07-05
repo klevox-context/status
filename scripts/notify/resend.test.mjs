@@ -24,3 +24,8 @@ test("throws on a non-ok create", async () => {
   const failFetch = async () => ({ ok: false, status: 422, text: async () => "bad" });
   await assert.rejects(() => sendBroadcast({ apiKey: "k", audienceId: "a", from: "f", subject: "s", html: "h" }, failFetch));
 });
+
+test("throws when create returns no id (API shape drift)", async () => {
+  const noIdFetch = async () => ({ ok: true, json: async () => ({ data: {} }) });
+  await assert.rejects(() => sendBroadcast({ apiKey: "k", audienceId: "a", from: "f", subject: "s", html: "h" }, noIdFetch), /no broadcast id/);
+});

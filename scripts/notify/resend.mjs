@@ -8,6 +8,7 @@ export async function sendBroadcast({ apiKey, audienceId, from, subject, html },
   });
   if (!create.ok) throw new Error(`Resend create broadcast: ${create.status} ${await create.text()}`);
   const { id } = await create.json();
+  if (!id) throw new Error("Resend create broadcast: response contained no broadcast id");
   const send = await fetchImpl(`${API}/broadcasts/${id}/send`, { method: "POST", headers, body: "{}" });
   if (!send.ok) throw new Error(`Resend send broadcast: ${send.status} ${await send.text()}`);
   return id;
