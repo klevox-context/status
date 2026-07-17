@@ -23,6 +23,19 @@ test("unknown kind throws", () => {
 
 test("maintenance title is HTML-escaped in the body", () => {
   const { html } = buildEmail({ kind: "maintenance", service: "x", title: '<img src=x onerror=alert(1)>' });
-  assert.doesNotMatch(html, /<img/);
+  // NB: the branded frame contains a legit wordmark <img>, so assert on the payload itself:
+  // the malicious tag is neutralized (no live `<img src=x …>`) and rendered as inert escaped text.
+  assert.doesNotMatch(html, /<img src=x/);
   assert.match(html, /&lt;img/);
+});
+
+test("renders in the shared Aibuku branded frame", () => {
+  const { html } = buildEmail({ kind: "maintenance", service: "Portal", title: "Portal maintenance" });
+  assert.match(html, /^<!doctype html>/);
+  assert.match(html, /aibuku-wordmark-on-light\.png/); // wordmark masthead
+  assert.match(html, /aibuku-wordmark-on-dark\.png/); // dark-mode wordmark
+  assert.match(html, /class="btn"[^>]*>View live status</); // one olive-ink CTA
+  assert.match(html, /background:#0c0c09/); // olive ink, not the old blue/gray
+  assert.doesNotMatch(html, /#666/); // old unbranded footer color gone
+  assert.doesNotMatch(html, /font-family:system-ui,sans-serif"/); // old wrapper gone
 });
